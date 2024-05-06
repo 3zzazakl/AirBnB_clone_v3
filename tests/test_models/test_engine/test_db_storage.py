@@ -81,5 +81,17 @@ class TestDBStorage(unittest.TestCase):
         self.assertEqual(retrieved_obj.id, obj_id)
         self.assertIsNone(models.storage.get(State, "fake_id"))
 
+    @unittest.skipIf(SKIP_DB, "Testing DBStorage")
+    def test_count(self):
+        """Test the get method"""
+        models.storage.reload()
+        initial_count = models.storage.count()
+        state_count = models.storage.count(State)
+        new_obj = State(name="California")
+        models.storage.new(new_obj)
+        self.assertEqual(models.storage.count(State), state_count + 1)
+        self.assertEqual(models.storage.count(), initial_count + 1)
+
+
 if __name__ == "__main__":
     unittest.main()
