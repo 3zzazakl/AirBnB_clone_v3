@@ -16,6 +16,7 @@ def teardown_db(exception):
 
 
 if __name__ == "__main__":
+    """Main function"""
     import os
     host = os.getenv("HBNB_API_HOST", "0.0.0.0")
     port = int(os.getenv("HBNB_API_PORT", 5000))
