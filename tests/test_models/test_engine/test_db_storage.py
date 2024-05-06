@@ -22,6 +22,8 @@ DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
 
+SKIP_DB = models.storage_t != 'db'
+
 
 class TestDBStorageDocs(unittest.TestCase):
     """Tests to check the documentation and style of DBStorage class"""
@@ -67,42 +69,17 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-
-class TestFileStorage(unittest.TestCase):
-    """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_returns_dict(self):
-        """Test that all returns a dictionaty"""
-        self.assertIs(type(models.storage.all()), dict)
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_no_class(self):
-        """Test that all returns all rows when no class is passed"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_new(self):
-        """test that new adds an object to the database"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_save(self):
-        """Test that save properly saves objects to file.json"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+class TestDBStorage(unittest.TestCase):
+    """Test the DBStorage class"""
+    @unittest.skipIf(SKIP_DB, "Testing DBStorage")
     def test_get(self):
-        """Test that get properly retrieves an object from the database"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_count(self):
-        """Test that count properly counts the number of objects in storage"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_delete(self):
-        """Test that delete properly deletes an object from storage"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_close(self):
-        """Test that close properly calls close on the session"""
-
+        """Test the get method"""
+        new_obj = State(name="California")
+        new_obj.save()
+        obj_id = new_obj.id
+        retrieved_obj = models.storage.get(State, obj_id)
+        self.assertEqual(retrieved_obj.id, obj_id)
+        self.assertIsNone(models.storage.get(State, "fake_id"))
 
 if __name__ == "__main__":
     unittest.main()
