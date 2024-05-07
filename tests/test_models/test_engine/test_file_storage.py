@@ -183,6 +183,21 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(storage.count(), len(new_dict))
         FileStorage._FileStorage__objects = save
 
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_reload(self):
+        """Test that reload properly loads objects from file.json"""
+        storage = FileStorage()
+        new_dict = {}
+        for key, value in classes.items():
+            instance = value()
+            instance_key = instance.__class__.__name__ + "." + instance.id
+            new_dict[instance_key] = instance
+        with open("file.json", "w") as f:
+            json.dump(new_dict, f)
+        storage.reload()
+        for key, value in new_dict.items():
+            self.assertTrue(value == storage._FileStorage__objects[key])
+
 
 if __name__ == "__main__":
     unittest.main()
