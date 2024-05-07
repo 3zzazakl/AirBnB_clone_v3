@@ -124,7 +124,8 @@ def post_places_search():
         for city in cities_obj:
             if city:
                 for place in city.places:
-                    list_places.append(place)
+                    if place not in list_places:
+                        list_places.append(place)
 
     if amenities:
         if not list_places:
