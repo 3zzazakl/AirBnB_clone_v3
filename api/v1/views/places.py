@@ -89,34 +89,52 @@ def put_place(place_id):
 @app_views.route('/places_search', methods=['POST'], strict_slashes=False)
 def post_places_search():
     """Searches for places"""
-    if request.is_json:
-        data = request.get_json()
-        if not data:
-            abort(400, "Not a JSON")
+    if request.get_json() is None:
+        abort(400, "Not a JSON")
+
+    data = request.get_json()
+
+    if data and len(data):
         states = data.get('states', [])
         cities = data.get('cities', [])
         amenities = data.get('amenities', [])
-        if not states and not cities and not amenities:
-            abort(400, "Missing states, cities, and amenities")
-        places = []
+
+    if not data or not len(data) or (
+        not states and
+        not cities and
+        not amenities
+    ):
+        places = storage.all(Place).values()
+        list_places = []
+        for place in places:
+            list_places.append(place.to_dict())
+        return jsonify(list_places)
+
+    list_places = []
+    if states:
         for state_id in states:
             state = storage.get(State, state_id)
-            if state is not None:
+            if state:
                 for city in state.cities:
                     for place in city.places:
-                        places.append(place)
+                        list_places.append(place.to_dict())
+
+    if cities:
         for city_id in cities:
             city = storage.get(City, city_id)
-            if city is not None:
+            if city:
                 for place in city.places:
-                    places.append(place)
+                    list_places.append(place.to_dict())
+
+    if amenities:
         for amenity_id in amenities:
             amenity = storage.get(Amenity, amenity_id)
-            if amenity is not None:
+            if amenity:
                 for place in amenity.places:
-                    if place not in places:
-                        places.append(place)
-        places = [place.to_dict() for place in places]
-        return jsonify(places)
-    else:
-        abort(400, "Not a JSON")
+                    list_places.append(place.to_dict())
+
+    places = []
+    for place in list_places:
+        if place not in places:
+            places.append(place)
+    return jsonify(places)
