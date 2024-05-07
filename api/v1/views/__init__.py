@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""blueprint for the API"""
+"""Cities module"""
 
 from flask import Blueprint
 
