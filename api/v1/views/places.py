@@ -137,6 +137,7 @@ def post_places_search():
 
     places = []
     for place in list_places:
-        if place not in places:
-            places.append(place)
+        dv = place.to_dict()
+        dv.pop('amenities', None)
+        places.append(dv)
     return jsonify(places)
