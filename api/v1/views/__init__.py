@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""Cities module"""
+""" Module to create a blueprint"""
+
 
 from flask import Blueprint
 

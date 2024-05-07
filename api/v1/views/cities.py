@@ -1,5 +1,6 @@
-#!usr/bin/python3
-"""City objects that handles all default RestFul API actions"""
+#!/usr/bin/python3
+""" Module to create a blueprint"""
+
 
 from flask import jsonify, abort, request
 from models import storage
