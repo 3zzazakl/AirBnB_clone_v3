@@ -112,26 +112,28 @@ def post_places_search():
 
     list_places = []
     if states:
-        for state_id in states:
-            state = storage.get(State, state_id)
+        states_obj = [storage.get(State, state_id) for state_id in states]
+        for state in states_obj:
             if state:
                 for city in state.cities:
                     for place in city.places:
                         list_places.append(place.to_dict())
 
     if cities:
-        for city_id in cities:
-            city = storage.get(City, city_id)
+        cities_obj = [storage.get(City, city_id) for city_id in cities]
+        for city in cities_obj:
             if city:
                 for place in city.places:
-                    list_places.append(place.to_dict())
+                    list_places.append(place)
 
     if amenities:
-        for amenity_id in amenities:
-            amenity = storage.get(Amenity, amenity_id)
-            if amenity:
-                for place in amenity.places:
-                    list_places.append(place.to_dict())
+        if not list_places:
+            list_places = storage.all(Place).values()
+        amenities_obj = [storage.get(Amenity, amenity_id)
+                         for amenity_id in amenities]
+        list_places = [place for place in list_places
+                       if all(amenity in place.amenities
+                              for amenity in amenities_obj)]
 
     places = []
     for place in list_places:
