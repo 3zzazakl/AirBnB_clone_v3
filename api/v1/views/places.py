@@ -84,3 +84,39 @@ def put_place(place_id):
         return jsonify(place.to_dict()), 200
     else:
         abort(400, "Not a JSON")
+
+
+@app_views.route('/places_search', methods=['POST'], strict_slashes=False)
+def post_places_search():
+    """Searches for places"""
+    if request.is_json:
+        data = request.get_json()
+        if not data:
+            abort(400, "Not a JSON")
+        states = data.get('states', [])
+        cities = data.get('cities', [])
+        amenities = data.get('amenities', [])
+        if not states and not cities and not amenities:
+            abort(400, "Missing states, cities, and amenities")
+        places = []
+        for state_id in states:
+            state = storage.get(State, state_id)
+            if state is not None:
+                for city in state.cities:
+                    for place in city.places:
+                        places.append(place)
+        for city_id in cities:
+            city = storage.get(City, city_id)
+            if city is not None:
+                for place in city.places:
+                    places.append(place)
+        for amenity_id in amenities:
+            amenity = storage.get(Amenity, amenity_id)
+            if amenity is not None:
+                for place in amenity.places:
+                    if place not in places:
+                        places.append(place)
+        places = [place.to_dict() for place in places]
+        return jsonify(places)
+    else:
+        abort(400, "Not a JSON")
