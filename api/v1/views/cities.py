@@ -14,7 +14,7 @@ from api.v1.views import app_views
 def get_cities(state_id):
     """Retrieves the list of all City objects of a State"""
     state = storage.get(State, state_id)
-    if state is None:
+    if not state:
         return abort(404)
     cities_list = [city.to_dict() for city in state.cities]
     return jsonify(cities_list)

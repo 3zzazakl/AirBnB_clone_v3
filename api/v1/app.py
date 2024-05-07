@@ -2,7 +2,7 @@
 """Flask app"""
 
 
-from flask import Flask
+from flask import Flask, jsonify
 from api.v1.views import app_views
 from models import storage
 from werkzeug.exceptions import NotFound
@@ -10,9 +10,9 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/api/v1/*": {"origins": "0.0.0.0"}})
+CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
-app.register_blueprint(app_views, url_prefix="/api/v1")
+app.register_blueprint(app_views)
 
 
 @app.teardown_appcontext
@@ -24,7 +24,7 @@ def teardown_db(exception):
 @app.errorhandler(NotFound)
 def not_found(error):
     """Return a JSON-formatted 404 status code response"""
-    return {"error": "Not found"}, 404
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == "__main__":
