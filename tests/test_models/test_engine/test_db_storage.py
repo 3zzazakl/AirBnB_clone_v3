@@ -69,6 +69,7 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
+
 class TestDBStorage(unittest.TestCase):
     """Test the DBStorage class"""
     @unittest.skipIf(SKIP_DB, "Testing DBStorage")
