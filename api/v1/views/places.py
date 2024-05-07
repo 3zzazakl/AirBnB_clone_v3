@@ -116,8 +116,9 @@ def post_places_search():
         for state in states_obj:
             if state:
                 for city in state.cities:
-                    for place in city.places:
-                        list_places.append(place.to_dict())
+                    if city:
+                        for place in city.places:
+                            list_places.append(place)
 
     if cities:
         cities_obj = [storage.get(City, city_id) for city_id in cities]
